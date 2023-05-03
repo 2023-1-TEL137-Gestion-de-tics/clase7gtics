@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head th:fragment="header (title)">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,13 +15,13 @@
                         data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false"
                         aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarText" >
+                <div class="collapse navbar-collapse" id="navbarText">
                     <ul class="navbar-nav me-auto mt-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${active == 'Employee'?'active':''}"
                                th:href="@{/employee}">Employee</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" sec:authorize="hasAnyAuthority('admin')">
                             <a class="nav-link" th:classappend="${active == 'Shipper'?'active':''}"
                                th:href="@{/shipper}">Shipper</a>
                         </li>
@@ -29,8 +30,14 @@
                                th:href="@{/product}">Product</a>
                         </li>
                     </ul>
-                    <div>
-                        <a th:href="@{/loginForm}">(Iniciar Sesión)</a>
+                    <div sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}">(Iniciar Sesión)</a>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <span th:text="|Bienvenido ${session.usuario.nombre} ${session.usuario.apellido}|"></span>
+                        <form th:action="@{/logout}" method="post">
+                            <input class="btn btn-link" type="submit" value="(Cerrar Sesión)">
+                        </form>
                     </div>
                 </div>
             </div>
